@@ -72,15 +72,19 @@ class ChatService:
 
     def handle_user_prompt(self, text_prompt: str = None, uploaded_image_path: str = None):
         # Display user's textual prompt in the UI
-        if self.ui_view and text_prompt:
+        if self.ui_view and text_prompt and text_prompt.strip() != "": # Ensure text_prompt is not empty or just spaces
             self.ui_view.add_message_to_display(sender="You", message=text_prompt)
         
-        # If an image was uploaded for this prompt, ChatWindow already indicated it.
-        # We still need to handle the prompt logic correctly based on its presence.
+        # If an image was uploaded, ChatWindow shows a thumbnail. 
+        # If only image and no text, ChatWindow sends " " as prompt.
+        # We can add a user message for the uploaded image if desired, but thumbnail might be enough.
+        # Example: if self.ui_view and uploaded_image_path and (not text_prompt or text_prompt.strip() == ""):
+        #     self.ui_view.add_message_to_display(sender="You", message=f"(Image: {uploaded_image_path.split('/')[-1]})")
+
 
         # Add a "generating..." message to UI immediately
         if self.ui_view:
-            self.ui_view.add_message_to_display(sender="Bot", message="Generating, please wait...")
+            self.ui_view.add_message_to_display(sender="Bot", message="Generating, please wait...", is_loading=True)
 
         # Start the generation in a new thread
         generation_thread = threading.Thread(
