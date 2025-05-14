@@ -32,23 +32,23 @@ class ChatWindow(ctk.CTk):
         self.upload_area_frame = ctk.CTkFrame(self.input_outer_frame, fg_color="transparent")
         self.upload_area_frame.pack(fill=ctk.X, pady=(5,0)) # pady only at top
 
-        self.upload_button = ctk.CTkButton(self.upload_area_frame, text="Upload Image", command=self._on_upload_image)
+        self.upload_button = ctk.CTkButton(self.upload_area_frame, text="Upload Image", command=self._on_upload_image, font=("Segoe UI", 12))
         self.upload_button.pack(side=ctk.LEFT, padx=(0,5))
 
         self.thumbnail_label = ctk.CTkLabel(self.upload_area_frame, text="") # For displaying thumbnail
         self.thumbnail_label.pack(side=ctk.LEFT, padx=5)
-        self.uploaded_image_filename_label = ctk.CTkLabel(self.upload_area_frame, text="", font=("Arial", 10), text_color="gray")
+        self.uploaded_image_filename_label = ctk.CTkLabel(self.upload_area_frame, text="", font=("Segoe UI", 11), text_color="gray")
         self.uploaded_image_filename_label.pack(side=ctk.LEFT, padx=5)
 
         # Frame for prompt input and send button
         self.prompt_send_frame = ctk.CTkFrame(self.input_outer_frame, fg_color="transparent")
         self.prompt_send_frame.pack(fill=ctk.X, pady=5)
         
-        self.prompt_input = ctk.CTkEntry(self.prompt_send_frame, placeholder_text="Enter your prompt here...")
+        self.prompt_input = ctk.CTkEntry(self.prompt_send_frame, placeholder_text="Enter your prompt here...", font=("Segoe UI", 13))
         self.prompt_input.pack(side=ctk.LEFT, fill=ctk.X, expand=True, padx=(0, 5))
         self.prompt_input.bind("<Return>", self._on_send_prompt)
 
-        self.send_button = ctk.CTkButton(self.prompt_send_frame, text="Send", command=self._on_send_prompt)
+        self.send_button = ctk.CTkButton(self.prompt_send_frame, text="Send", command=self._on_send_prompt, font=("Segoe UI", 12))
         self.send_button.pack(side=ctk.LEFT)
 
     def _on_send_prompt(self, event=None):
@@ -142,11 +142,11 @@ class ChatWindow(ctk.CTk):
 
         # Sender and Timestamp
         header_text = f"{sender} [{timestamp}]"
-        header_label = ctk.CTkLabel(content_frame, text=header_text, font=("Arial", 10, "italic"), text_color=text_color)
+        header_label = ctk.CTkLabel(content_frame, text=header_text, font=("Segoe UI", 11, "italic"), text_color=text_color)
         header_label.pack(padx=10, pady=(5,0), anchor="nw")
 
         if message:
-            msg_label = ctk.CTkLabel(content_frame, text=message, wraplength=self.chat_scrollable_frame.winfo_width() - 100, justify=ctk.LEFT if anchor == 'w' else ctk.RIGHT, text_color=text_color, font=("Arial", 12))
+            msg_label = ctk.CTkLabel(content_frame, text=message, wraplength=self.chat_scrollable_frame.winfo_width() - 100, justify=ctk.LEFT if anchor == 'w' else ctk.RIGHT, text_color=text_color, font=("Segoe UI", 14))
             msg_label.pack(padx=10, pady=(0,10), anchor="w")
 
         if image_path:
