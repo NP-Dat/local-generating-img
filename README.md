@@ -11,8 +11,8 @@ This Python GUI application allows users to generate images using AI models thro
 
 *   **Chat-like UI:** Interface resembling ChatGPT for user interaction.
 *   **Text Prompting:** Users can input text descriptions to generate images.
-*   **Image-to-Image Prompting:** Users can upload an image to be used as a base for generation, along with a text prompt.
-*   **Image Generation:** Utilizes AI models like `stabilityai/sd-turbo` via the `diffusers` library.
+*   **Image-to-Image Prompting:** Users can upload an image to be used as a base for generation, along with a text prompt. (Currently disabled)
+*   **Image Generation:** Utilizes AI models like `stabilityai/sdxl-turbo` via the `diffusers` library.
 *   **Local Storage:** Generated images are automatically saved to a `storage/` folder.
 *   **SOLID Principles:** The project aims to adhere to SOLID principles in its code and structure.
 
@@ -88,11 +88,15 @@ image-gen-chat-app/
 
 ## 6. Models Used
 
-This application is designed to work with models from Hugging Face, primarily using the `diffusers` library.
+This application is designed to work with models from Hugging Face, primarily using the `diffusers` library. The current primary model for text-to-image generation is `stabilityai/sdxl-turbo`.
+
+*   **`stabilityai/sdxl-turbo`**: Better and larger. (Currently used for text-to-image)
 *   **`stabilityai/sd-turbo`**: A FAST, LIGHT WEIGHT text-to-image model. Good for general purposes, animals, and objects. May have limitations with human figures.
 *   **`Heartsync/NSFW-Uncensored`**: An alternative model, potentially for anime-style uncensored  (NSFW content). (It is so heavy. Make sure your device can run it, because it is really heavy).
+*   **`UnfilteredAI/NSFW-gen-v2.1`**: Still too large.
 
-The `image_generator_service.py` handles loading and interacting with these models.
+The `image_generator_service.py` handles loading and interacting with the chosen model.
+Image-to-image functionality is currently disabled.
 
 ## 7. Usage
 

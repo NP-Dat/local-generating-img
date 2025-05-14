@@ -19,41 +19,41 @@ class ChatService:
                 else:
                     generated_image_path_or_msg = "Text-to-image generation failed."
 
-            elif text_prompt and uploaded_image_path: # Image-to-image
-                initial_pil_image = self.storage_service.load_image(uploaded_image_path) # Assumes load_image exists
-                if not initial_pil_image: # Try to open directly if not loaded by storage service (e.g. if storage_service.load_image is basic)
-                    try:
-                        from PIL import Image
-                        initial_pil_image = Image.open(uploaded_image_path).convert("RGB")
-                    except Exception as e:
-                        generated_image_path_or_msg = f"Failed to load initial image: {uploaded_image_path}. Error: {e}"
-                        # Schedule UI update for this error
-                        if self.ui_view:
-                            self.ui_view.after(0, lambda: self.ui_view.add_message_to_display(sender="Bot", message=generated_image_path_or_msg))
-                        return
+            # elif text_prompt and uploaded_image_path: # Image-to-image
+            #     initial_pil_image = self.storage_service.load_image(uploaded_image_path) # Assumes load_image exists
+            #     if not initial_pil_image: # Try to open directly if not loaded by storage service (e.g. if storage_service.load_image is basic)
+            #         try:
+            #             from PIL import Image
+            #             initial_pil_image = Image.open(uploaded_image_path).convert("RGB")
+            #         except Exception as e:
+            #             generated_image_path_or_msg = f"Failed to load initial image: {uploaded_image_path}. Error: {e}"
+            #             # Schedule UI update for this error
+            #             if self.ui_view:
+            #                 self.ui_view.after(0, lambda: self.ui_view.add_message_to_display(sender="Bot", message=generated_image_path_or_msg))
+            #             return
 
 
-                if initial_pil_image:
-                    generated_image_pil = self.image_generator_service.generate_image_to_image(
-                        prompt=text_prompt,
-                        init_image=initial_pil_image
-                    )
-                    if generated_image_pil:
-                        original_filename = uploaded_image_path.split('/')[-1]
-                        generated_image_path_or_msg = self.storage_service.save_image(
-                            generated_image_pil, 
-                            prompt_text=text_prompt, 
-                            original_filename=original_filename
-                        )
-                    else:
-                        generated_image_path_or_msg = "Image-to-image generation failed."
-                # else: # This case is now handled by the initial_pil_image check above
-                # generated_image_path_or_msg = f"Failed to load initial image: {uploaded_image_path}"
+            #     if initial_pil_image:
+            #         generated_image_pil = self.image_generator_service.generate_image_to_image(
+            #             prompt=text_prompt,
+            #             init_image=initial_pil_image
+            #         )
+            #         if generated_image_pil:
+            #             original_filename = uploaded_image_path.split('/')[-1]
+            #             generated_image_path_or_msg = self.storage_service.save_image(
+            #                 generated_image_pil, 
+            #                 prompt_text=text_prompt, 
+            #                 original_filename=original_filename
+            #             )
+            #         else:
+            #             generated_image_path_or_msg = "Image-to-image generation failed."
+            #     # else: # This case is now handled by the initial_pil_image check above
+            #     # generated_image_path_or_msg = f"Failed to load initial image: {uploaded_image_path}"
             
-            elif not text_prompt and uploaded_image_path:
-                 generated_image_path_or_msg = "Please provide a text prompt to accompany the uploaded image."
+            elif uploaded_image_path: # Covers (not text_prompt and uploaded_image_path) and (text_prompt and uploaded_image_path) if i2i is disabled
+                 generated_image_path_or_msg = "Image-to-image functionality is currently disabled. Please provide a text prompt only."
             
-            else:
+            elif not text_prompt: # No text prompt and no image path (already handled above)
                  generated_image_path_or_msg = "Please provide a text prompt."
 
             # Schedule the final UI update from the main thread

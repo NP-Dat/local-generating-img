@@ -2,14 +2,14 @@
 
 ## 1. Goal
 
-To develop a Python GUI application that allows users to generate images using the `stabilityai/sd-turbo` model through a chat-like interface. Users can provide text prompts and optionally an initial image to guide the generation process. Generated images will be saved locally.
+To develop a Python GUI application that allows users to generate images using the `stabilityai/sdxl-turbo` model through a chat-like interface. Users can provide text prompts and optionally an initial image to guide the generation process. Generated images will be saved locally.
 
 ## 2. Core Features
 
 *   **Chat-like UI:** Interface resembling ChatGPT for user interaction.
 *   **Text Prompting:** Users can input text descriptions to generate images.
 *   **Image-to-Image Prompting:** Users can upload an image to be used as a base for generation, along with a text prompt.
-*   **Image Generation:** Utilizes the `stabilityai/sd-turbo` model via the `diffusers` library.
+*   **Image Generation:** Utilizes the `stabilityai/sdxl-turbo` model via the `diffusers` library.
 *   **Local Storage:** Generated images are automatically saved to a `storage/` folder.
 *   **SOLID Principles:** Code and project structure will adhere to SOLID principles.
 
@@ -17,7 +17,7 @@ To develop a Python GUI application that allows users to generate images using t
 
 *   **Python 3.x**
 *   **GUI Framework:** A suitable Python GUI framework (e.g., Tkinter with `customtkinter` for a modern look, or PyQt/PySide for more advanced features).
-*   **Hugging Face `diffusers`:** For interacting with the `sd-turbo` model.
+*   **Hugging Face `diffusers`:** For interacting with the `sdxl-turbo` model.
 *   **`Pillow` (PIL):** For image manipulation (loading, displaying, saving).
 *   **`torch`:** As a dependency for `diffusers`.
 *   **`transformers` & `accelerate`:** As dependencies for `diffusers`.
@@ -34,7 +34,7 @@ image-gen-chat-app/
 ├── services/
 │   ├── __init__.py
 │   ├── chat_service.py         # Handles chat logic, orchestrates UI and generation
-│   ├── image_generator_service.py # Interface for sd-turbo model
+│   ├── image_generator_service.py # Interface for sdxl-turbo model
 │   └── storage_service.py      # Handles saving/loading images
 ├── models/                     # (Optional) Data models for messages, prompts
 │   ├── __init__.py
@@ -57,7 +57,7 @@ image-gen-chat-app/
     *   Install dependencies: `pip install -r requirements.txt`.
 2.  **Image Generator Service (`services/image_generator_service.py`):**
     *   Implement a class `ImageGeneratorService`.
-    *   Method to load the `stabilityai/sd-turbo` model using `AutoPipelineForText2Image` and `AutoPipelineForImage2Image`.
+    *   Method to load the `stabilityai/sdxl-turbo` model using `AutoPipelineForText2Image` and `AutoPipelineForImage2Image`.
         *   Handle `torch_dtype=torch.float16`, `variant="fp16"`.
         *   Move pipe to "cuda" if available, with a fallback or warning for CPU.
     *   Method for text-to-image generation:
@@ -134,7 +134,7 @@ image-gen-chat-app/
 ## 6. SOLID Principles Application Rules
 
 *   **Single Responsibility Principle (SRP):**
-    *   `ImageGeneratorService`: Solely responsible for interacting with the `sd-turbo` model and generating images.
+    *   `ImageGeneratorService`: Solely responsible for interacting with the `stabilityai/sdxl-turbo` model and generating images.
     *   `StorageService`: Solely responsible for saving and potentially loading images from the filesystem.
     *   `ChatWindow` (and its components): Solely responsible for UI presentation and user input.
     *   `ChatService`: Orchestrates the interaction between UI, image generation, and storage, managing the application's flow but delegating specific tasks.
@@ -148,6 +148,17 @@ image-gen-chat-app/
 *   **Dependency Inversion Principle (DIP):**
     *   High-level modules like `ChatService` will depend on abstractions (e.g., an `ImageGeneratorInterface` that `ImageGeneratorService` implements) rather than concrete implementations.
     *   Dependencies (like `ImageGeneratorService` and `StorageService`) should be injected into `ChatService` (e.g., via constructor) to facilitate testing and flexibility.
+
+## 6.1 Model Details and Exploration
+
+This section outlines the models considered and their characteristics based on initial testing:
+
+*   **`stabilityai/sd-turbo`**: (done and ok with animal and things, not with human) - *Initial model considered/used.*
+*   **`stabilityai/sdxl-turbo`**: (better and larger) - *Current primary model for text-to-image.*
+*   **`Heartsync/NSFW-Uncensored`**: (trying and okay with uncensored but only anime theme)
+*   **`UnfilteredAI/NSFW-gen-v2.1`**: (still too large)
+
+Image-to-image functionality is currently disabled in the application.
 
 ## 7. Considerations & Future Enhancements
 

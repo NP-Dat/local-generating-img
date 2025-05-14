@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from customtkinter import filedialog # Added for file dialog
+# from customtkinter import filedialog # Added for file dialog
 import datetime # Add this import
 from PIL import Image, ImageTk # Import Pillow
 import os # For joining paths
@@ -11,8 +11,8 @@ class ChatWindow(ctk.CTk):
         self.geometry("800x700") # Increased height a bit for thumbnail
 
         self.chat_service = chat_service # This will be set by MainApplication
-        self.current_uploaded_image_path = None # To store path from file dialog before sending with prompt
-        self.current_uploaded_image_thumbnail = None # To hold the CTkImage for the thumbnail
+        # self.current_uploaded_image_path = None # To store path from file dialog before sending with prompt
+        # self.current_uploaded_image_thumbnail = None # To hold the CTkImage for the thumbnail
 
         # Main frame
         self.main_frame = ctk.CTkFrame(self)
@@ -32,14 +32,6 @@ class ChatWindow(ctk.CTk):
         self.upload_area_frame = ctk.CTkFrame(self.input_outer_frame, fg_color="transparent")
         self.upload_area_frame.pack(fill=ctk.X, pady=(5,0)) # pady only at top
 
-        self.upload_button = ctk.CTkButton(self.upload_area_frame, text="Upload Image", command=self._on_upload_image, font=("Segoe UI", 12))
-        self.upload_button.pack(side=ctk.LEFT, padx=(0,5))
-
-        self.thumbnail_label = ctk.CTkLabel(self.upload_area_frame, text="") # For displaying thumbnail
-        self.thumbnail_label.pack(side=ctk.LEFT, padx=5)
-        self.uploaded_image_filename_label = ctk.CTkLabel(self.upload_area_frame, text="", font=("Segoe UI", 11), text_color="gray")
-        self.uploaded_image_filename_label.pack(side=ctk.LEFT, padx=5)
-
         # Frame for prompt input and send button
         self.prompt_send_frame = ctk.CTkFrame(self.input_outer_frame, fg_color="transparent")
         self.prompt_send_frame.pack(fill=ctk.X, pady=5)
@@ -55,57 +47,59 @@ class ChatWindow(ctk.CTk):
         """Handles sending a prompt (text and any pre-uploaded image)."""
         prompt_text = self.prompt_input.get().strip()
         
-        if not prompt_text and not self.current_uploaded_image_path:
-            self.add_message_to_display(sender="System", message="Please enter a prompt or upload an image.")
+        # if not prompt_text and not self.current_uploaded_image_path:
+        if not prompt_text:
+            # self.add_message_to_display(sender="System", message="Please enter a prompt or upload an image.")
+            self.add_message_to_display(sender="System", message="Please enter a prompt.")
             return
         
         if self.chat_service:
             self.chat_service.handle_user_prompt(
-                text_prompt=prompt_text if prompt_text else " ", # Send a space if no text but image exists
-                uploaded_image_path=self.current_uploaded_image_path
+                text_prompt=prompt_text # if prompt_text else " ", # Send a space if no text but image exists
+                # uploaded_image_path=self.current_uploaded_image_path
             )
             self.prompt_input.delete(0, ctk.END)
-            self._clear_uploaded_image_thumbnail() # Clear thumbnail and path
+            # self._clear_uploaded_image_thumbnail() # Clear thumbnail and path
         else:
             print("ChatService not available.")
 
-    def _clear_uploaded_image_thumbnail(self):
-        self.current_uploaded_image_path = None
-        self.current_uploaded_image_thumbnail = None
-        self.thumbnail_label.configure(image=None)
-        self.thumbnail_label.image = None # Keep reference
-        self.uploaded_image_filename_label.configure(text="")
+    # def _clear_uploaded_image_thumbnail(self):
+    #     self.current_uploaded_image_path = None
+    #     self.current_uploaded_image_thumbnail = None
+    #     self.thumbnail_label.configure(image=None)
+    #     self.thumbnail_label.image = None # Keep reference
+    #     self.uploaded_image_filename_label.configure(text="")
 
-    def _on_upload_image(self):
-        """Handles selecting an image file to be used with the next prompt."""
-        filepath = filedialog.askopenfilename(
-            title="Select an Image",
-            filetypes=([
-                ("Image Files", "*.png *.jpg *.jpeg *.bmp *.gif"),
-                ("All Files", "*.*")
-            ])
-        )
-        if filepath:
-            self.current_uploaded_image_path = filepath
-            filename = os.path.basename(filepath)
+    # def _on_upload_image(self):
+    #     """Handles selecting an image file to be used with the next prompt."""
+    #     filepath = filedialog.askopenfilename(
+    #         title="Select an Image",
+    #         filetypes=([
+    #             ("Image Files", "*.png *.jpg *.jpeg *.bmp *.gif"),
+    #             ("All Files", "*.*")
+    #         ])
+    #     )
+    #     if filepath:
+    #         self.current_uploaded_image_path = filepath
+    #         filename = os.path.basename(filepath)
             
-            try:
-                img = Image.open(filepath)
-                img.thumbnail((50, 50)) # Create a 50x50 thumbnail
-                self.current_uploaded_image_thumbnail = ctk.CTkImage(light_image=img, dark_image=img, size=(img.width, img.height))
+    #         try:
+    #             img = Image.open(filepath)
+    #             img.thumbnail((50, 50)) # Create a 50x50 thumbnail
+    #             self.current_uploaded_image_thumbnail = ctk.CTkImage(light_image=img, dark_image=img, size=(img.width, img.height))
                 
-                self.thumbnail_label.configure(image=self.current_uploaded_image_thumbnail)
-                self.thumbnail_label.image = self.current_uploaded_image_thumbnail # Keep reference
-                self.uploaded_image_filename_label.configure(text=filename)
-            except Exception as e:
-                self.current_uploaded_image_path = None # Clear if error loading
-                self.current_uploaded_image_thumbnail = None
-                self.thumbnail_label.configure(image=None)
-                self.thumbnail_label.image = None
-                self.uploaded_image_filename_label.configure(text="Error loading thumbnail")
-                self.add_message_to_display(sender="System", message=f"Error displaying thumbnail: {e}")
-        else:
-            self.current_uploaded_image_path = None # No need to explicitly clear if dialog is cancelled, already handled by _clear_uploaded_image_thumbnail on send
+    #             self.thumbnail_label.configure(image=self.current_uploaded_image_thumbnail)
+    #             self.thumbnail_label.image = self.current_uploaded_image_thumbnail # Keep reference
+    #             self.uploaded_image_filename_label.configure(text=filename)
+    #         except Exception as e:
+    #             self.current_uploaded_image_path = None # Clear if error loading
+    #             self.current_uploaded_image_thumbnail = None
+    #             self.thumbnail_label.configure(image=None)
+    #             self.thumbnail_label.image = None
+    #             self.uploaded_image_filename_label.configure(text="Error loading thumbnail")
+    #             self.add_message_to_display(sender="System", message=f"Error displaying thumbnail: {e}")
+    #     else:
+    #         self.current_uploaded_image_path = None # No need to explicitly clear if dialog is cancelled, already handled by _clear_uploaded_image_thumbnail on send
 
     def add_message_to_display(self, sender: str, message: str = None, image_path: str = None, is_loading: bool = False):
         """Adds a message or an image to the chat display using individual frames for better layout."""
@@ -192,19 +186,19 @@ if __name__ == '__main__':
             # Simulate user message
             if text_prompt and text_prompt.strip() != "":
                  self.ui_view.add_message_to_display("You", message=text_prompt)
-            if uploaded_image_path:
-                # In a real scenario, the user's uploaded image might also be shown as a "You: [image]" message
-                # For now, the thumbnail serves this purpose before sending.
-                # Let's simulate the bot acknowledging the upload if no text_prompt
-                if not text_prompt or text_prompt.strip() == "":
-                    self.ui_view.add_message_to_display("You", message=f"(Uploaded {os.path.basename(uploaded_image_path)})")
+            # if uploaded_image_path:
+            #     # In a real scenario, the user's uploaded image might also be shown as a "You: [image]" message
+            #     # For now, the thumbnail serves this purpose before sending.
+            #     # Let's simulate the bot acknowledging the upload if no text_prompt
+            #     if not text_prompt or text_prompt.strip() == "":
+            #         self.ui_view.add_message_to_display("You", message=f"(Uploaded {os.path.basename(uploaded_image_path)})")
 
             # Simulate bot "generating" message
             self.ui_view.add_message_to_display("Bot", message="Generating, please wait...", is_loading=True)
             
             # Simulate bot response (text and/or image) after a delay
             def _dummy_response():
-                if text_prompt and text_prompt.strip() != "" and not uploaded_image_path:
+                if text_prompt and text_prompt.strip() != "": # and not uploaded_image_path: # Removed uploaded_image_path condition
                     self.ui_view.add_message_to_display("Bot", message=f"Okay, I will generate an image based on: '{text_prompt}'.")
                     # Simulate image generation - create a dummy image file for testing
                     dummy_image_path = "dummy_generated_image.png"
@@ -215,19 +209,19 @@ if __name__ == '__main__':
                     except Exception as e:
                         self.ui_view.add_message_to_display("Bot", message=f"Error creating dummy image: {e}")
 
-                elif uploaded_image_path:
-                    original_filename = os.path.basename(uploaded_image_path)
-                    self.ui_view.add_message_to_display("Bot", message=f"Okay, processing '{original_filename}' with prompt: '{text_prompt}'.")
-                    # Simulate image-to-image - create another dummy image
-                    dummy_image_path_i2i = "dummy_i2i_generated_image.png"
-                    try:
-                        img = Image.new('RGB', (200, 150), color = 'lightgreen')
-                        img.save(dummy_image_path_i2i)
-                        self.ui_view.add_message_to_display("Bot", image_path=dummy_image_path_i2i)
-                    except Exception as e:
-                        self.ui_view.add_message_to_display("Bot", message=f"Error creating dummy i2i image: {e}")
-                else: # Only text prompt
-                    self.ui_view.add_message_to_display("Bot", message="I received only text. How can I assist?")
+                # elif uploaded_image_path:
+                #     original_filename = os.path.basename(uploaded_image_path)
+                #     self.ui_view.add_message_to_display("Bot", message=f"Okay, processing '{original_filename}' with prompt: '{text_prompt}'.")
+                #     # Simulate image-to-image - create another dummy image
+                #     dummy_image_path_i2i = "dummy_i2i_generated_image.png"
+                #     try:
+                #         img = Image.new('RGB', (200, 150), color = 'lightgreen')
+                #         img.save(dummy_image_path_i2i)
+                #         self.ui_view.add_message_to_display("Bot", image_path=dummy_image_path_i2i)
+                #     except Exception as e:
+                #         self.ui_view.add_message_to_display("Bot", message=f"Error creating dummy i2i image: {e}")
+                elif not text_prompt or text_prompt.strip() == "": # Only text prompt (no prompt was given)
+                    self.ui_view.add_message_to_display("Bot", message="I received no text. How can I assist?")
 
             self.ui_view.after(2000, _dummy_response) # Simulate delay
 
