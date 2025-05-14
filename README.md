@@ -4,6 +4,9 @@
 
 This Python GUI application allows users to generate images using AI models through a chat-like interface. Users can provide text prompts and optionally an initial image to guide the generation process. Generated images are saved locally.
 
+![image](https://github.com/user-attachments/assets/182abf2b-4ae2-49b4-a066-ffb741918771)
+
+
 ## 2. Core Features
 
 *   **Chat-like UI:** Interface resembling ChatGPT for user interaction.
